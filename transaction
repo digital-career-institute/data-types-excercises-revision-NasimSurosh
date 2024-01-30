@@ -1,0 +1,63 @@
+
+create type status as enum('new', 'paid','waiting for payment');
+
+create table invoice(buyer varchar(100), seller varchar(100), value int, account_number varchar(100));
+
+alter table invoice add column status status;
+
+select * from invoice;
+
+insert into invoice values ('ACS', 'MA', 2500,'DC575447983549875','paid'),
+('DB', 'BME', 25034,'DC5764547983549875','waiting for payment'),
+('POST', 'DSL', 25450,'DC57544745643549875','paid');
+
+select * from invoice;
+
+select * from invoice where status = 'new';
+
+alter table invoice add column userID uuid;
+
+update invoice set userID ='10ff61fc-b8f2-47a2-99bd-df5765f1d2b9' where buyer = 'ACS';
+
+
+select * from invoice;
+
+alter table invoice add column json_data json;
+alter table invoice add column json_data1 jsonb;
+
+update invoice set  json_data1 = '{"buyer": "company c", "seller": "company d", "status": "new", "account_number":
+"123321123", "value": "23.43"}'::jsonb where buyer = 'BMW';
+
+alter table invoice add column invID int;
+
+alter table invoice add column phone_number bigint[3];
+
+
+update invoice set phone_number = '{432323112,123344311,127634443}' where invid = 2;
+
+select buyer, phone_number[3] from invoice where invid = 3;
+
+select buyer, phone_number from invoice where '432323112' = any(phone_number);
+
+alter table invoice add column image_or_text bytea;
+
+
+
+update invoice set image_or_text = 
+pg_read_binary_file('/home/dci-student/Downloads/Markdown Syntax - Part 1.png')::bytea;
+
+
+
+alter table invoice add column payment_deadline DATE, add column
+transaction_time timestamp, add column transaction_hour int, add column cycle_payment boolean; 
+
+update invoice set payment_deadline = '2024-01-31', transaction_time = current_timestamp,
+transaction_hour = extract(hour from current_timestamp), cycle_payment = false;
+
+
+
+update invoice set transaction_time = transaction_time at time zone 'utc' at time zone'Australia/Melbourne';
+
+select * from invoice;
+
+update invoice set transaction_time = transaction_time + interval '10 hours' time zone 'Australia/Melbourne';
